@@ -10,7 +10,7 @@ import {
 import { Profile } from '@/types/profile';
 
 // Services
-import { getRecommendedProfiles } from '@/services/profiles/getRecommendedProfiles';
+import { getRecommendedProfiles } from '@/services/profiles';
 
 interface HomePageProps {
   recommendedProfiles: Array<Profile>;
