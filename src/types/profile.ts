@@ -6,7 +6,7 @@ export interface Profile {
   followNftAddress: string;
   metadata: string;
   isDefault: boolean;
-  picture: Picture;
+  picture?: Picture;
   handle: string;
   coverPicture: Picture;
   ownedBy: string;
@@ -23,7 +23,7 @@ export interface Attribute {
 }
 
 export interface Picture {
-  original: Original;
+  original?: Original;
   __typename: string;
 }
 
