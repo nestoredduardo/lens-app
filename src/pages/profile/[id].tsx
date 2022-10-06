@@ -6,13 +6,15 @@ import {
 } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { Profile } from '@/types/profile';
+import { Publications } from '@/types/post';
 import { ServerError } from '@/types/services';
 
 // Services
-import { getProfile } from '@/services/profiles';
+import { getProfile, getPost } from '@/services/profiles';
 
 interface ProfilePageProps {
   profile: Profile;
+  post: Publications;
 }
 
 interface ProfilePageParams extends ParsedUrlQuery {
@@ -25,9 +27,12 @@ export const getServerSideProps: GetServerSideProps<
 > = async ({ params }) => {
   const { id } = params as ProfilePageParams;
 
-  const profile = await getProfile(id as string);
+  const profile = getProfile(id as string);
+  const post = getPost(id as string);
 
-  if (profile instanceof ServerError) {
+  const [profileData, postData] = await Promise.all([profile, post]);
+
+  if (profileData instanceof ServerError || postData instanceof ServerError) {
     return {
       notFound: true,
     };
@@ -35,14 +40,15 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      profile,
+      profile: profileData,
+      post: postData,
     },
   };
 };
 
 const Profile: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ profile }) => {
+> = ({ profile, post }) => {
   return (
     <div>
       {profile.picture?.original ? (
