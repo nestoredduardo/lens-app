@@ -12,6 +12,9 @@ import { ServerError } from '@/types/services';
 // Services
 import { getProfile, getPost } from '@/services/profiles';
 
+// Utils
+import ABI from '@/utils/abi.json';
+
 interface ProfilePageProps {
   profile: Profile;
   post: Publications;
@@ -20,6 +23,8 @@ interface ProfilePageProps {
 interface ProfilePageParams extends ParsedUrlQuery {
   id: string;
 }
+
+const address = '0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d';
 
 export const getServerSideProps: GetServerSideProps<
   ProfilePageProps,
@@ -49,6 +54,15 @@ export const getServerSideProps: GetServerSideProps<
 const Profile: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ profile, post }) => {
+  console.log(post);
+
+  const connect = async () => {
+    const accounts = await window.ethereum.request({
+      method: 'eth_requestAccounts',
+    });
+    console.log(accounts);
+  };
+
   return (
     <div>
       {profile.picture?.original ? (
@@ -79,6 +93,14 @@ const Profile: NextPage<
       <p>{profile.bio}</p>
       <p>Followers: {profile.stats.totalFollowers}</p>
       <p>Following: {profile.stats.totalFollowing}</p>
+
+      <ul className="flex flex-col gap-2">
+        {post.items.map((item) => (
+          <li key={item.id} className="p-2 bg-gray-50 border border-gray-100">
+            {item.metadata.content}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
